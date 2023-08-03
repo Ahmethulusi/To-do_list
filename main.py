@@ -1,0 +1,90 @@
+from tkinter import *
+
+
+root = Tk()
+root.title("To-Do-List")
+root.geometry("400x620+500+100")
+root.resizable(0, 0)
+
+task_list = []
+def deleteTask():
+    task = str(listbox.get(ANCHOR))
+    if task in task_list:
+        task_list.remove(task)
+        with open("tasklist.txt","w") as taskfile:
+            for task in task_list:
+                taskfile.write(task+"\n")
+
+        listbox.delete(ANCHOR)        
+def addTask():
+    task = task_entry.get()
+    task_entry.delete(0, END)
+    if task:
+        with open("tasklist.txt", "a") as taskfile:
+            taskfile.write(f"\n{task}")
+        task_list.append(task)
+        listbox.insert(END,task)
+def openTaskFİle():
+    try:
+        global task_list
+        with open("tasklist.txt", "r") as taskfile:
+            tasks =taskfile.readlines()
+
+        for task in tasks:
+            if task != "\n":
+                task_list.append(task)
+                listbox.insert(END,task)
+    except:
+        file=open("tasklist.txt","w")
+        file.close()
+#icon
+image_icon = PhotoImage(file="C:/Users/90533/Desktop/YAZILIM/PYTHON/to-do/task.png")
+root.iconphoto(False, image_icon)
+
+# top bar
+
+TopImage = PhotoImage(file="C:/Users/90533/Desktop/YAZILIM/PYTHON/to-do/topbar.png")
+Label(root, image=TopImage).pack()
+#dock
+
+dockImage = PhotoImage(file="C:/Users/90533/Desktop/YAZILIM/PYTHON/to-do/dock.png")
+Label(root,image=dockImage,bg="#32405b").place(x=30,y=25)
+
+noteImage = PhotoImage(file="C:/Users/90533/Desktop/YAZILIM/PYTHON/to-do/task.png")
+Label(root,image=noteImage,bg="#32405b").place(x=30,y=25)
+
+heading = Label(root,text="ALL TASKS",bg="#32405b",font="Arial 20 bold",fg="white")
+heading.place(x=100,y=25)
+
+## MAİN 
+
+frame = Frame(root, width = 400,height=50,bg="white")
+frame.place(x=0,y=180)
+
+task = StringVar()
+task_entry = Entry(frame,width=18,font="arial 20",bd = 0)
+task_entry.place(x=10,y=7)
+task_entry.focus()
+
+button = Button(frame,text="ADD",font="arial 20 bold",bg="#5a95ff",fg="#fff",bd=0,command=addTask)
+button.place(x=300,y=0)
+
+
+#listbox
+frame1 = Frame(root,bd=3,width=700,height=280,bg="#32405b")
+frame1.pack(pady=(160,0))
+
+listbox = Listbox(frame1,font=("arial 20"),width=24,height=9,bg="#32405b",selectbackground="#5a95ff")
+listbox.pack(side=LEFT,fill=BOTH,padx=2)
+scrollbar=Scrollbar(frame1)
+scrollbar.pack(side=RIGHT,fill=BOTH)
+
+listbox.config(yscrollcommand=scrollbar.set)
+scrollbar.config(command=listbox.yview)
+
+openTaskFİle()
+
+Delete_icon = PhotoImage(file="C:/Users/90533/Desktop/YAZILIM/PYTHON/to-do/delete.png")
+Button(root,image=Delete_icon,bd=0,command=deleteTask).place(x=200,y=550)
+
+root.mainloop()
